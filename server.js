@@ -1,4 +1,8 @@
 const express = require('express');
+
+const PORT = process.env.PORT || 3001;
+//this is for heroku and sets an environment variable called process.env.PORT
+
 const app = express();
 
 const { animals } = require('./data/animals');
@@ -69,6 +73,6 @@ app.get('/api/animals', (req, res) => {
 
 
 
-app.listen(3001, () => {
-    console.log('API server is now on port 3001');
+app.listen(PORT, () => {
+    console.log('API server is now on port ${PORT}!');
 });
