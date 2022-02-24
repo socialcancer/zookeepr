@@ -1,8 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-
 const express = require('express');
-// const bodyParser = require('body-parser')
+const { animals } = require('./data/animals');
 
 const PORT = process.env.PORT || 3001;
 //this is for heroku and sets an environment variable called process.env.PORT
@@ -12,9 +11,6 @@ const app = express();
 // middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(express.urlencoded());
-
-const { animals } = require('./data/animals');
 
 function filterByQuery(query, animalsArray) {
     let personalityTraitsArray = [];
@@ -157,6 +153,7 @@ app.post('/api/animals', (req, res) => {
     }
 
     // console.log(req.body.id);
+    // console.log(req.body)
     res.json(animals);
 
 });
