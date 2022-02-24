@@ -1,14 +1,20 @@
+const fs = require('fs');
+const path = require('path');
+
 const express = require('express');
+// const bodyParser = require('body-parser')
 
 const PORT = process.env.PORT || 3001;
 //this is for heroku and sets an environment variable called process.env.PORT
 
 const app = express();
 
+// middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+// app.use(express.urlencoded());
+
 const { animals } = require('./data/animals');
-
-
-
 
 function filterByQuery(query, animalsArray) {
     let personalityTraitsArray = [];
@@ -58,12 +64,55 @@ function findById(id, animalsArray) {
 
     return result;
     //returning the result
-
 };
 
+function createNewAnimal(body, animalsArray) {
+    const animal = body;
+    //assign the body variable to animal
 
 
+    animalsArray.push(animal);
+    //passing the parameter to the animalsArray using the push method
+
+    fs.writeFileSync(
+        //use the fs node module to establish the path for our json file
+        //synchronous version of fs.writeFIle()
+        path.join(__dirname, './data/animals.json'),
+        //this a synchronous version that does not require a callback
+        //we use path.join to join the value od the __dirname which represents thr directory of thr file we execute the code with.
+
+        JSON.stringify({ animals: animalsArray })
+        //save the JS array data as JSON
+    );
+
+    return animal;
+    //return the contents of animal and have what is being saved to animal exposed to other functions
+};
+
+function validateAnimal(animal) {
+    if (!animal.name || typeof animal.name !== 'string') {
+        //if not an animal name or type of animal return false
+        return false;
+    }
+    if (!animal.species || typeof animal.species !== 'string') {
+        //if not a species or type of species return false
+        return false;
+    }
+    if (!animal.diet || typeof animal.diet !== 'string') {
+        //if not diet or type of diet return false
+        return false;
+    }
+    if (!animal.personalityTraits || !Array.isArray(animal.personalityTraits)) {
+        //if not type of personality trait that is in the current array return false
+        return false;
+    }
+    return true;
+}
+
+
+//routes
 app.get('/api/animals', (req, res) => {
+
     let results = animals;
     //attaching animals(json data) to the variable results
 
@@ -93,11 +142,25 @@ app.get('/api/animals/:id', (req, res) => {
 
 });
 
+app.post('/api/animals', (req, res) => {
+    // set id based on what the next index of the array will be
+    req.body.id = animals.length.toString();
 
+    // add animal to json file and animals array in this function
+    // const animal = createNewAnimal(req.body, animals);
 
+    //if any data in req.body is incorrect, send a 400 error back
+    if (!validateAnimal(req.body)) {
+        res.status(400).send('the animal is not properly formatted. ')
+    } else {
+        const animal = createNewAnimal(req.body, animals);
+    }
 
+    // console.log(req.body.id);
+    res.json(animals);
 
-
+});
+//this route accepts data because it's an empty object
 
 app.listen(PORT, () => {
     console.log('API server is now on port ${PORT}!');
