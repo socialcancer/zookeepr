@@ -47,9 +47,19 @@ function filterByQuery(query, animalsArray) {
     }
     // return the filtered results:
     return filteredResults;
-}
+};
+
+function findById(id, animalsArray) {
+    //created a function that takes two parameters one id and the other animalArray
+
+    const result = animalsArray.filter(animal => animal.id === id)[0];
+    //we are filtering animalsArray by id and then attaching the result to result
 
 
+    return result;
+    //returning the result
+
+};
 
 
 
@@ -68,6 +78,22 @@ app.get('/api/animals', (req, res) => {
     res.json(results);
     //this is passing the parameter results through the response
 });
+
+app.get('/api/animals/:id', (req, res) => {
+    //created a new route with <route>/: <parameter name>
+    const result = findById(req.params.id, animals);
+    //using findById and passing the parameters of req.params.id, and animals (takes two parameters) and then assigning it to results
+    if (result) {
+        res.json(result);
+    } else {
+        res.send(404);
+    }
+
+    //res.json with the parameter results makes the data work in a json format
+
+});
+
+
 
 
 
