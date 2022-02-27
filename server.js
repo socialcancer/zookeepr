@@ -159,6 +159,11 @@ app.post('/api/animals', (req, res) => {
 });
 //this route accepts data because it's an empty object
 
+app.get('/', (req, res) => {
+    res.send(path.join(__dirname, './public/index.html'))
+
+});
+//this route is for the actual code for the index.html
 app.listen(PORT, () => {
     console.log('API server is now on port ${PORT}!');
 });
