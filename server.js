@@ -12,6 +12,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//public
+app.use(express.static('public'));
+
 function filterByQuery(query, animalsArray) {
     let personalityTraitsArray = [];
     // Note that we save the animalsArray as filteredResults here:
@@ -160,10 +163,25 @@ app.post('/api/animals', (req, res) => {
 //this route accepts data because it's an empty object
 
 app.get('/', (req, res) => {
-    res.send(path.join(__dirname, './public/index.html'))
-
+    res.sendFile(path.join(__dirname, './public/index.html'));
+    //this route is for the actual code for the index.html
 });
-//this route is for the actual code for the index.html
+
+app.get('/animals', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/animals.html'));
+    //this route is for the actual code for the serves up animals.html
+});
+
+app.get('/zookeepers', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/zookeepers.html'));
+    //this route is for the actual code for the serves up zookeepers.html
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+    //this route is redirects the user back to the index page
+});
+
 app.listen(PORT, () => {
     console.log('API server is now on port ${PORT}!');
 });
